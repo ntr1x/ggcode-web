@@ -72,7 +72,7 @@ const menu = [
                     fluid
                     class="justify-start"
                     :label="item.label"
-                    @click="handleLogout"
+                    @click="item.action"
                   />
                 </template>
               </li>

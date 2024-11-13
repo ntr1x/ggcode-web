@@ -1,48 +1,60 @@
-import { StorageSerializers, useStorage, type RemovableRef } from '@vueuse/core'
+import { StorageSerializers, useLocalStorage, type RemovableRef } from '@vueuse/core'
 
-// export type Principal = {
-//   issuer: string
-//   subject: string
-//   username: string
-//   fullName: string
-//   email: string
-//   token: string
-//   authorities: string[]
-// }
-
-export type Session = {
-  username: string
-  // principal: Principal
+export type Principal = {
+  // issuer: string
+  // subject: string
+  fullName: string
+  firstName: string
+  lastName: string
+  email: string
+  // token: string
+  // authorities: string[]
 }
 
 export type AuthState = {
-  session: Session | null
+  principal: Principal | null
 }
 
-function merge(state: AuthState): AuthState {
-  if (import.meta.client) {
-    Object.assign(state, {
-      session: useStorage<Session | null>('pinia/auth/session', null, localStorage || sessionStorage, { serializer: StorageSerializers.object })
-    })
-  }
+function initialState(): AuthState {
+  return { principal: null }
+}
+
+function loadPersistedState(): AuthState {
+  const storage = localStorage ?? sessionStorage
+  const encoded = storage.getItem('pinia/auth')
+  return Object.assign(initialState(), encoded == null ? undefined : JSON.parse(encoded))
+}
+
+function savePersistedState(state: AuthState) {
+  const storage = localStorage ?? sessionStorage
+  const encoded: string = JSON.stringify(state)
+  storage.setItem('pinia/auth', encoded)
   return state
 }
 
 export const useAuthStore = defineStore('auth', {
-  state: (): AuthState => merge({
-    session: null
-  }),
-  hydrate(state, initialState) {
-    merge(state)
+  state: (): AuthState => import.meta.browser
+    ? loadPersistedState()
+    : initialState()
+  ,
+  hydrate(state: AuthState, _initialState: AuthState) {
+    Object.assign(state, loadPersistedState())
   },
   actions: {
     async signIn() {
-      this.session = {
-        username: 'Demo User',
-      }
+      Object.assign(this, savePersistedState({
+        principal: {
+          fullName: 'Demo User',
+          firstName: 'Demo',
+          lastName: 'User',
+          email: 'demo.user@example.com',
+        },
+      }))
     },
     async signOut() {
-      this.session = null
+      Object.assign(this, savePersistedState({
+        principal: null,
+      }))
     },
   }
 })

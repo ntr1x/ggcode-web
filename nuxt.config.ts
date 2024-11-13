@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     'nuxt-svgo',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    '@nuxtjs/robots',
+    '@nuxtjs/sitemap'
   ],
   primevue: {
     options: {
@@ -37,5 +39,17 @@ export default defineNuxtConfig({
     '/': { swr: true },
     '/login': { swr: true },
     '/private/**': { ssr: false },
+  },
+  robots: {
+    groups: [
+      {
+        disallow: ['/private', '/login'],
+        allow: ['/'],
+      },
+    ]
+  },
+  site: {
+    name: 'Develfish Studio',
+    url: process.env.NUXT_SITE_CONFIG,
   }
 })

@@ -3,6 +3,9 @@ definePageMeta({
   layout: 'private',
 })
 
+const auth = useAuthStore()
+const { principal } = storeToRefs(auth)
+
 type FormType = {
   firstName: string
   lastName: string
@@ -10,9 +13,9 @@ type FormType = {
 }
 
 const form: FormType = reactive<FormType>({
-  firstName: 'John',
-  lastName: 'Smith',
-  email: 'john.smith@example.com',
+  firstName: principal.value?.firstName ?? '',
+  lastName: principal.value?.lastName ?? '',
+  email: principal.value?.email ?? '',
 })
 </script>
 

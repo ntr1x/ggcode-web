@@ -2,7 +2,7 @@
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { session } = storeToRefs(authStore)
+const { principal } = storeToRefs(authStore)
 
 async function handleLogout() {
   await authStore.signOut()
@@ -33,11 +33,11 @@ async function handleLogout() {
       </div>
       <div class="part-right">
         <ClientOnly>
-          <template v-if="session != null">
+          <template v-if="principal != null">
             <NuxtLink custom v-slot="{ navigate }" to="/private/user/profile">
               <Button label="User Profile" text rounded @click="navigate">
                 <Avatar shape="circle" icon="pi pi-user" class="-my-2 -ml-2" />
-                <span>{{ session.username ?? 'Unknown' }}</span>
+                <span>{{ principal.username ?? 'Unknown' }}</span>
               </Button>
             </NuxtLink>
             <Button label="Logout" rounded @click="handleLogout" />

@@ -13,6 +13,8 @@
     "@mdi/font": "^7.4.47",
     "@nuxt/image": "^1.8.1",
     "@nuxtjs/device": "^3.2.4",
+    "@nuxtjs/robots": "^4.1.11",
+    "@nuxtjs/sitemap": "^6.1.5",
     "@pinia/nuxt": "^0.7.0",
     "@primevue/themes": "^4.2.1",
     "@tailwindcss/typography": "^0.5.15",
