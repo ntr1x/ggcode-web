@@ -1,66 +1,41 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import Aura from "@primevue/themes/aura"
+
 export default defineNuxtConfig({
-  extends: ['@nuxt/ui-pro'],
-
+  compatibilityDate: '2024-04-03',
+  devtools: { enabled: true },
   modules: [
-    '@nuxt/content',
-    '@nuxt/eslint',
-    '@nuxt/fonts',
+    'shadcn-nuxt',
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode',
+    '@nuxtjs/device',
     '@nuxt/image',
-    '@nuxt/ui',
-    '@nuxthq/studio',
+    '@primevue/nuxt-module',
+    'nuxt-svgo',
+    '@pinia/nuxt',
     '@vueuse/nuxt',
-    'nuxt-og-image'
   ],
-
-  hooks: {
-    // Define `@nuxt/ui` components as global to use them in `.md` (feel free to add those you need)
-    'components:extend': (components) => {
-      const globals = components.filter(c => ['UButton'].includes(c.pascalName))
-
-      globals.forEach(c => c.global = true)
+  primevue: {
+    options: {
+      theme: 'none',
     }
   },
-
-  colorMode: {
-    disableTransition: true
+  image: {},
+  pinia: {
+    storesDirs: ['./stores/**'],
   },
-
-  nitro: {
-    prerender: {
-      routes: [
-        '/',
-        '/docs'
-      ],
-      crawlLinks: true
-    }
+  postcss: {
+    plugins: {
+      'postcss-import': {},
+      tailwindcss: {},
+      autoprefixer: {},
+    },
   },
-
+  tailwindcss: {
+    exposeConfig: true
+  },
   routeRules: {
-    '/api/search.json': { prerender: true },
-    '/docs': { redirect: '/docs/getting-started', prerender: false }
-  },
-
-  devtools: {
-    enabled: true
-  },
-
-  typescript: {
-    strict: false
-  },
-
-  future: {
-    compatibilityVersion: 4
-  },
-
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never',
-        braceStyle: '1tbs'
-      }
-    }
-  },
-
-  compatibilityDate: '2024-07-11'
+    '/': { swr: true },
+    '/login': { swr: true },
+    '/private/**': { ssr: false },
+  }
 })
