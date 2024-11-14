@@ -15,7 +15,10 @@ async function handleLogout() {
     <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl flex items-stretch justify-between gap-3 h-[--header-height]">
       <div class="lg:flex-1 flex items-center gap-1.5">
         <NuxtLink to="/" class="app-title">
-          Develfish Studio
+          <div class="flex items-center gap-3">
+            <NuxtImg src="/img/logo.png" sizes="32px" />
+            <div>Develfish Studio</div>
+          </div>
         </NuxtLink>
       </div>
       <div class="part-center">
@@ -37,7 +40,7 @@ async function handleLogout() {
             <NuxtLink custom v-slot="{ navigate }" to="/private/user/profile">
               <Button label="User Profile" text rounded @click="navigate">
                 <Avatar shape="circle" icon="pi pi-user" class="-my-2 -ml-2" />
-                <span>{{ principal.username ?? 'Unknown' }}</span>
+                <span>{{ principal.fullName ?? 'Unknown' }}</span>
               </Button>
             </NuxtLink>
             <Button label="Logout" rounded @click="handleLogout" />

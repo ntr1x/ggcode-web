@@ -3336,6 +3336,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "date-fns@npm:4.1.0"
+  checksum: 10c0/b79ff32830e6b7faa009590af6ae0fb8c3fd9ffad46d930548fbb5acf473773b4712ae887e156ba91a7b3dc30591ce0f517d69fd83bd9c38650fdc03b4e0bac8
+  languageName: node
+  linkType: hard
+
 "db0@npm:^0.2.1":
   version: 0.2.1
   resolution: "db0@npm:0.2.1"
@@ -6014,6 +6021,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"numfmt@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "numfmt@npm:3.1.3"
+  checksum: 10c0/46170ed5fd5efcf7562a924fdf504bea50057c9ea40a66294f3a6687ff93b2179aed8c1518c6c7c6d19e493f9dd70a7043e67b8efe508da5596d68b6bc30933f
+  languageName: node
+  linkType: hard
+
 "nuxi@npm:^3.15.0":
   version: 3.15.0
   resolution: "nuxi@npm:3.15.0"
@@ -6043,6 +6057,8 @@ __metadata:
     "@tailwindcss/typography": "npm:^0.5.15"
     "@vueuse/core": "npm:^11.2.0"
     "@vueuse/nuxt": "npm:^11.2.0"
+    date-fns: "npm:^4.1.0"
+    numfmt: "npm:^3.1.3"
     nuxt: "npm:^3.14.159"
     nuxt-primevue: "npm:^3.0.0"
     nuxt-svgo: "npm:^4.0.8"
