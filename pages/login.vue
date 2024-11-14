@@ -3,6 +3,10 @@ definePageMeta({
   layout: 'splash'
 })
 
+useHead({
+  title: 'Login'
+})
+
 const router = useRouter()
 const authStore = useAuthStore()
 

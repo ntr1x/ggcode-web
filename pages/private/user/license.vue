@@ -4,6 +4,10 @@ definePageMeta({
   layout: false,
 })
 
+useHead({
+  title: 'License'
+})
+
 const breadcrumb = ref([
   { label: 'User' },
   { label: 'License' },

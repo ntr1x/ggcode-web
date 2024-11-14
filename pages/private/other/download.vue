@@ -4,6 +4,10 @@ definePageMeta({
   layout: false,
 })
 
+useHead({
+  title: 'Downloads'
+})
+
 const breadcrumb = ref([
   { label: 'Other' },
   { label: 'Downloads' },

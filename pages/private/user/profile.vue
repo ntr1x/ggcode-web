@@ -1,7 +1,10 @@
 <script setup lang="ts">
 definePageMeta({
-  name: 'Profile',
   layout: false,
+})
+
+useHead({
+  title: 'Profile'
 })
 
 const auth = useAuthStore()
