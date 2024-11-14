@@ -2,11 +2,6 @@
 const router = useRouter()
 const authStore = useAuthStore()
 
-const items = ref([
-    { label: 'User' },
-    { label: 'Profile' },
-])
-
 async function handleLogout() {
   await authStore.signOut()
   router.push('/')
@@ -81,9 +76,7 @@ const menu = [
         </div>
         <div class="flex-1 flex flex-col gap-3">
           <div class="shrink-0 px-4">
-            <Breadcrumb :model="items" class="bg-transparent px-0 py-2 text-sm">
-              <template #separator> / </template>
-            </Breadcrumb>
+            <slot name="breadcrumb" />
           </div>
           <div class="flex-1 p-8 bg-surface-950 border border-primary-800 rounded-lg">
             <slot />
