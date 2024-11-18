@@ -1,24 +1,39 @@
 <script setup lang="ts">
+type QueryParams = {
+  code: string,
+  session_state: string,
+  state: string
+}
+
 definePageMeta({
   layout: 'splash'
 })
 
 useHead({
-  title: 'Login'
+  title: 'Welcome'
 })
 
+const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-async function handleAuth(provider: string) {
+onMounted(async () => {
   try {
-    const { authUri } = await authStore.doAuth({ provider })
-    document.location.href = authUri
+    const { code, session_state, state } = route.query as QueryParams
+
+    await authStore.doCallback({
+      code,
+      sessionState: session_state,
+      state
+    })
+
+    router.push('/private/user/profile')
   } catch (e) {
     console.error(e)
+    authStore.doClear()
     router.push('/')
   }
-}
+})
 </script>
 
 <template>
@@ -31,13 +46,6 @@ async function handleAuth(provider: string) {
       </NuxtLink>
     </div>
     <h1 class="text-center text-primary-200 font-semibold text-2xl">Welcome</h1>
-    <div class="grid grid-cols-1 gap-3">
-      <Button outlined icon="mdi mdi-google" label="Continue with Google" @click="() => handleAuth('google')" />
-      <Button outlined icon="mdi mdi-github" label="Continue with GitHub" @click="() => handleAuth('github')" />
-    </div>
-    <div class="text-center text-sm">
-      By using Develfish Studio, you agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-    </div>
   </section>
 </template>
 

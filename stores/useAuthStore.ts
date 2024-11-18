@@ -1,4 +1,42 @@
 import { StorageSerializers, useLocalStorage, type RemovableRef } from '@vueuse/core'
+import { useRemoteSecurity } from '~/hooks/useRemoteSecurity'
+
+export type AuthRequest = {
+  state?: string
+  provider?: string
+  redirectUri: string
+}
+
+export type AuthResponse = {
+  authUri: string
+}
+
+export type LogoutRequest = {
+  idToken: string
+  redirectUri: string
+}
+
+export type LogoutResponse = {
+  logoutUri: string
+}
+
+export type CallbackRequest = {
+  state: string
+  code: string
+  redirectUri: string
+  sessionState: string
+}
+
+export type CallbackResponse = {
+  idToken: string
+  idExpiresIn: number
+  accessToken: string
+  accessExpiresIn: number
+  refreshToken: string
+  refreshExpiresIn: number
+  principal: Principal
+}
+
 
 export type Principal = {
   // issuer: string
@@ -13,10 +51,25 @@ export type Principal = {
 
 export type AuthState = {
   principal: Principal | null
+  idToken: Token | null
+  accessToken: Token | null
+  refreshToken: Token | null
+}
+
+export type Token = {
+  token: string
+  expiresIn: number
+  expiresAt: number
+  invalidateInterval: number
 }
 
 function initialState(): AuthState {
-  return { principal: null }
+  return {
+    principal: null,
+    idToken: null,
+    accessToken: null,
+    refreshToken: null,
+  }
 }
 
 function loadPersistedState(): AuthState {
@@ -41,20 +94,81 @@ export const useAuthStore = defineStore('auth', {
     Object.assign(state, loadPersistedState())
   },
   actions: {
-    async signIn() {
-      Object.assign(this, savePersistedState({
-        principal: {
-          fullName: 'Demo User',
-          firstName: 'Demo',
-          lastName: 'User',
-          email: 'demo.user@example.com',
-        },
-      }))
-    },
     async signOut() {
       Object.assign(this, savePersistedState({
         principal: null,
+        idToken: null,
+        accessToken: null,
+        refreshToken: null,
       }))
     },
+    async doLogout() {
+      const remoteSecurity = useRemoteSecurity()
+      const redirectUri = new URL('/', window.location.origin)
+      const idToken = this.idToken?.token
+      Object.assign(this, savePersistedState({
+        principal: null,
+        idToken: null,
+        accessToken: null,
+        refreshToken: null,
+      }))
+      const { data } = await remoteSecurity.post<LogoutResponse>('/security/logout', {
+        redirectUri,
+        idToken,
+      })
+
+      return data
+    },
+    async doAuth(request: Omit<AuthRequest, "redirectUri">) {
+      const remoteSecurity = useRemoteSecurity()
+      const redirectUri = new URL('/auth/callback', window.location.origin)
+      const { data } = await remoteSecurity.post<AuthResponse>('/security/auth', {
+        ...request,
+        redirectUri,
+      })
+
+      return data
+    },
+    async doCallback(request: Omit<CallbackRequest, "redirectUri">) {
+      const now = Date.now()
+      const remoteSecurity = useRemoteSecurity()
+      const redirectUri = new URL('/auth/callback', window.location.origin)
+      const { data } = await remoteSecurity.post<CallbackResponse>('/security/callback', {
+        ...request,
+        redirectUri: redirectUri.toString()
+      })
+
+      Object.assign(this, savePersistedState({
+        principal: data.principal,
+        idToken: {
+          token: data.idToken,
+          expiresIn: data.idExpiresIn,
+          expiresAt: now + data.idExpiresIn * 1000,
+          invalidateInterval: 10 * 1000,
+        },
+        accessToken: {
+          token: data.accessToken,
+          expiresIn: data.accessExpiresIn,
+          expiresAt: now + data.accessExpiresIn * 1000,
+          invalidateInterval: 10 * 1000,
+        },
+        refreshToken: {
+          token: data.refreshToken,
+          expiresIn: data.refreshExpiresIn,
+          expiresAt: now + data.refreshExpiresIn * 1000,
+          invalidateInterval: 10 * 1000
+        },
+      }))
+
+      console.log(4)
+    },
+    doClear() {
+      Object.assign(this, savePersistedState({
+        principal: null,
+        idToken: null,
+        accessToken: null,
+        refreshToken: null,
+      }))
+    }
   }
 })

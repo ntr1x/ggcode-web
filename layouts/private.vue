@@ -3,8 +3,8 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 async function handleLogout() {
-  await authStore.signOut()
-  router.push('/')
+  const { logoutUri } = await authStore.doLogout()
+  document.location.href = logoutUri
 }
 
 const menu = [

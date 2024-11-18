@@ -38,6 +38,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { swr: true },
     '/login': { swr: true },
+    '/auth/**': { ssr: false },
     '/private/**': { ssr: false },
   },
   robots: {
@@ -51,5 +52,14 @@ export default defineNuxtConfig({
   site: {
     name: 'Develfish Studio',
     url: process.env.NUXT_SITE_CONFIG,
+  },
+  runtimeConfig: {
+    public: {
+      remote: {
+        api: {
+          baseURL: 'http://api.local.example.com/server'
+        }
+      }
+    }
   }
 })

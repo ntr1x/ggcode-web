@@ -5,8 +5,8 @@ const authStore = useAuthStore()
 const { principal } = storeToRefs(authStore)
 
 async function handleLogout() {
-  await authStore.signOut()
-  router.push('/')
+  const { logoutUri } = await authStore.doLogout()
+  document.location.href = logoutUri
 }
 </script>
 
