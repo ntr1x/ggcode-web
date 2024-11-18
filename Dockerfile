@@ -17,8 +17,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/.output  app/.output
-COPY --from=builder /app/.nuxt  app/.nuxt
+COPY --from=builder /app/.output  /app/.output
+COPY --from=builder /app/.nuxt  /app/.nuxt
 
 ENV HOST=0.0.0.0
 EXPOSE 3000

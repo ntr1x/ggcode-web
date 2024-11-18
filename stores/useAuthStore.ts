@@ -156,11 +156,9 @@ export const useAuthStore = defineStore('auth', {
           token: data.refreshToken,
           expiresIn: data.refreshExpiresIn,
           expiresAt: now + data.refreshExpiresIn * 1000,
-          invalidateInterval: 10 * 1000
+          invalidateInterval: 10 * 1000,
         },
       }))
-
-      console.log(4)
     },
     doClear() {
       Object.assign(this, savePersistedState({
