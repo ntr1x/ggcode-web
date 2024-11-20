@@ -25,6 +25,8 @@ export type CallbackRequest = {
   code: string
   redirectUri: string
   sessionState: string
+  subscriptionId?: string
+  sessionRef?: string
 }
 
 export type CallbackResponse = {
@@ -138,27 +140,31 @@ export const useAuthStore = defineStore('auth', {
         redirectUri: redirectUri.toString()
       })
 
-      Object.assign(this, savePersistedState({
-        principal: data.principal,
-        idToken: {
-          token: data.idToken,
-          expiresIn: data.idExpiresIn,
-          expiresAt: now + data.idExpiresIn * 1000,
-          invalidateInterval: 10 * 1000,
-        },
-        accessToken: {
-          token: data.accessToken,
-          expiresIn: data.accessExpiresIn,
-          expiresAt: now + data.accessExpiresIn * 1000,
-          invalidateInterval: 10 * 1000,
-        },
-        refreshToken: {
-          token: data.refreshToken,
-          expiresIn: data.refreshExpiresIn,
-          expiresAt: now + data.refreshExpiresIn * 1000,
-          invalidateInterval: 10 * 1000,
-        },
-      }))
+      if (request.sessionRef == null) {
+        Object.assign(this, savePersistedState({
+          principal: data.principal,
+          idToken: {
+            token: data.idToken,
+            expiresIn: data.idExpiresIn,
+            expiresAt: now + data.idExpiresIn * 1000,
+            invalidateInterval: 10 * 1000,
+          },
+          accessToken: {
+            token: data.accessToken,
+            expiresIn: data.accessExpiresIn,
+            expiresAt: now + data.accessExpiresIn * 1000,
+            invalidateInterval: 10 * 1000,
+          },
+          refreshToken: {
+            token: data.refreshToken,
+            expiresIn: data.refreshExpiresIn,
+            expiresAt: now + data.refreshExpiresIn * 1000,
+            invalidateInterval: 10 * 1000,
+          },
+        }))
+      }
+
+      return data
     },
     doClear() {
       Object.assign(this, savePersistedState({

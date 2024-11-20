@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useStateSerde } from '~/hooks/useStateSerde';
+
 definePageMeta({
   layout: 'splash'
 })
@@ -7,17 +9,14 @@ useHead({
   title: 'Login'
 })
 
-const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
+const stateSerde = useStateSerde()
 
 async function handleAuth(provider: string) {
-  try {
-    const { authUri } = await authStore.doAuth({ provider })
-    document.location.href = authUri
-  } catch (e) {
-    console.error(e)
-    router.push('/')
-  }
+  const state = stateSerde.encode(stateSerde.clean(route.query))
+  const { authUri } = await authStore.doAuth({ provider, state: state ?? undefined })
+  document.location.href = authUri
 }
 </script>
 

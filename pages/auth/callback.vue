@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { omitBy, isUndefined } from 'lodash'
+import { useStateSerde } from '~/hooks/useStateSerde'
+
 type QueryParams = {
   code: string,
   session_state: string,
@@ -16,22 +19,33 @@ useHead({
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const stateSerde = useStateSerde()
 
 onMounted(async () => {
-  try {
-    const { code, session_state, state } = route.query as QueryParams
+  const { code, session_state, state } = route.query as QueryParams
+  const stateData = stateSerde.clean(stateSerde.decode(state))
 
-    await authStore.doCallback({
+  try {
+    const data = await authStore.doCallback({
       code,
+      state,
       sessionState: session_state,
-      state
+      subscriptionId: stateData?.subscriptionId ?? undefined,
+      sessionRef: stateData?.sessionRef ?? undefined
     })
 
-    router.push('/private/user/profile')
+    router.push({
+      path: stateData?.successPath ?? '/private/user/profile',
+      query: omitBy({
+        sessionRef: stateData?.sessionRef ?? undefined,
+        subscriptionId: stateData?.subscriptionId ?? undefined,
+        authData: stateData?.subscriptionId == null ? undefined : data.idToken?.split('.')[0] ?? undefined,
+      }, isUndefined)
+    })
   } catch (e) {
     console.error(e)
     authStore.doClear()
-    router.push('/')
+    router.push(stateData?.failurePath ?? '/')
   }
 })
 </script>
